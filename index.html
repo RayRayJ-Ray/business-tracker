@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Business Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#8250F8',
+                        surface: '#F5F3FF'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 p-4">
+    <h1 class="text-3xl font-bold text-center text-brand">My Business Tracker / Control de Mi Negocio</h1>
+
+    <p><a href="https://wa.me/521234567890?text=Hi!%20can%20I%20book%20an%20appointment." target="_blank">Book via WhatsApp / Reservar por WhatsApp</a></p>
+
+    <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
+        <h2>Clients / Clientes</h2>
+        <form class="flex flex-col gap-4">
+            <label for="client-name">Client name / Nombre del cliente:</label>
+            <input type="text" id="client-name" class="w-full border border-gray-300 rounded-lg p-3">
+            <button id="add-client-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add client / Agregar cliente</button>
+            <p id="client-error" class="text-red-600"></p>
+        </form>
+        <ul id="client-list">
+        </ul>
+    </section>
+
+    <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
+        <h2>Appointments / Citas</h2>
+        <form class="flex flex-col gap-4">
+            <label for="appointment-client">Client / Cliente:</label>
+            <input type="text" id="appointment-client" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="appointment-service">Service / Servicio:</label>
+            <input type="text" id="appointment-service" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="appointment-date">Date / Fecha:</label>
+            <input type="date" id="appointment-date" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="appointment-time">Time / Hora:</label>
+            <input type="time" id="appointment-time" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="appointment-deposit">Deposit / Depósito:</label>
+            <input type="number" id="appointment-deposit" min="0" step="0.01" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <button id="add-appointment-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add appointment / Agregar cita</button>
+            <p id="appointment-error" class="text-red-600"></p>
+        </form>
+        <ul id="appointment-list"></ul>
+    </section>
+
+    <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
+        <h2>Stock / Inventario</h2>
+        <form class="flex flex-col gap-4">
+            <label for="stock-name">Item / Artículo:</label>
+            <input type="text" id="stock-name" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="stock-quantity">Quantity / Cantidad:</label>
+            <input type="number" id="stock-quantity" min="0" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <button id="add-stock-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add item / Agregar artículo</button>
+            <p id="stock-error" class="text-red-600"></p>
+        </form>
+        <ul id="stock-list"></ul>
+    </section>
+
+    <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
+        <h2>Money / Dinero</h2>
+        <form class="flex flex-col gap-4">
+                <label for="service-select">Quick-select a service / Seleccionar servicio:</label>
+    <select id="service-select" class="w-full border border-gray-300 rounded-lg p-3">
+        <option value="">Select a service / Seleccionar un servicio ---</option>
+        <optgroup label="General">
+            <option value="Pedicure" data-price="400">Pedicure / Pedicura - $400 MXN</option>
+            <option value="Nails" data-price="300">Nails / Uñas - $300 MXN</option>
+            <option value="Rubber" data-price="200">Rubber - $200 MXN</option>
+            <option value="Gelish" data-price="150">Gelish - $150 MXN</option>
+            <option value="Gelish feet" data-price="200">Gelish feet / Gelish pies - $200 MXN</option>
+            <option value="Facial" data-price="350">Facial - $350 MXN</option>
+            <option value="Facial with dermapan" data-price="500">Facial with dermapan / Facial con dermapan - $500 MXN</option>
+            <option value="Lash lifting" data-price="200">Lash lifting / Lifting de pestañas - $200 MXN</option>
+            <option value="eyebrows" data-price="200">eyebrows / Cejas - $200 MXN</option>
+        </optgroup>
+        <optgroup label="Waxing / Depilación">
+            <option value="Wax eyebrows" data-price="100">Wax eyebrows / Cera en cejas -$100 MXN</option>
+            <option value="Wax mustache" data-price="100">Wax mustache / Cera en bigote -$100 MXN</option>
+            <option value="Wax half face" data-price="180">Wax half face / Cera en medio rostro -$180 MXN</option>
+            <option value="Wax armpit" data-price="100">Wax armpit / Cera en axila - $100 MXN</option>
+            <option value="Wax full arm" data-price="220">Wax full arm / Cera en brazo completo - $220 MXN</option>
+            <option value="Wax half arm" data-price="150">Wax half arm / Cera en mitad de brazo - $150 MXN</option>
+            <option value="Wax stomach" data-price="60">Wax stomach / Cera en estómago - $60 MXN</option>
+            <option value="Wax half back" data-price="150">Wax half back / Cera en mitad de espalda -$150 MXN</option>
+            <option value="Wax bikini" data-price="200">Wax bikini / Cera en bikini - $200 MXN</option>
+            <option value="Wax legs" data-price="320">Wax legs / Cera en piernas - $320 MXN</option>
+            <option value="Wax half leg" data-price="220">Wax half leg / Cera en media pierna - $220 MXN</option>
+        </optgroup>
+        <optgroup label="Hair / Cabello">
+            <option value="Hair" data-price="990">Hair / Cabello - $990 MXN</option>
+            <option value="Progressive multivitamin straigthening" data-price="990">Progressive multivitamin straightning / Alisado progresivo multivitamínico - $990 MXN</option>
+            <option value="Striaghtening reactivator" data-price="350">Straigthening reactivator / Reactivador de alisado - $350 MXN</option>
+            <option value="Intensive hair repair" data-price="550">Intensive hair repair / Reparación intensiva de cabello - $550 MXN</option>
+            <option value="Hair rescue ampoule" data-price="250">Hair rescue ampoule / Ampolla de rescate capilar - $250 MXN</option>
+            <option value="Express hairstyle" data-price="200">Express hairstyle / Peinado exprés (precio varía, $200-$300 MXN)</option>
+        </optgroup>
+    </select>
+            <label for="money-description">Description / Descripción:</label>
+            <input type="text" id="money-description" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="money-amount">Amount / Cantidad ($):</label>
+            <input type="number" id="money-amount" min="0" step="0.01" class="w-full border border-gray-300 rounded-lg p-3">
+            <button id="add-money-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add Transaction / Agregar Transacción</button>
+            <p id="money-error" class="text-red-600"></p>
+        </form>
+        <ul id="money-list"></ul>
+        <p>Total Money / Dinero Total: $<span id="total-income">0.00</span></p>
+    </section>
+
+    <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
+        <h2>Expenses / Gastos</h2>
+        <form class="flex flex-col gap-4">
+            <label for="expense-description">Description / Descripción:</label>
+            <input type="text" id="expense-description" class="w-full border border-gray-300 rounded-lg p-3">
+
+            <label for="expense-amount">Amount / Monto ($):</label>
+            <input type="number" id="expense-amount" min="0" step="0.01" class="w-full border border-gray-300 rounded-lg p-3">
+            <button id="add-expense-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add Expense / Agregar Gasto</button>
+            <p id="expense-error" class="text-red-600"></p>
+        </form>
+        <ul id="expense-list"></ul>
+        <p>Total Expenses / Gastos Totales: $<span id="total-expense">0.00</span></p>
+    </section>
+
+    <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
+        <h2>Profit / Ganancia</h2>
+        <p>Total Profit / Ganancia Total: $<span id="total-profit">0.00</span></p>
+    </section>
+
+
+    <script>
+
+        const totalProfitDisplay = document.getElementById("total-profit");
+
+        //----- Client -----
+        const clientError = document.getElementById("client-error");
+        const addButton = document.getElementById("add-client-button");
+        const nameInput = document.getElementById("client-name");
+        const clientList = document.getElementById("client-list");
+        let clients = JSON.parse(localStorage.getItem("clients")) || [];
+
+        clients.forEach(function(name) {
+            const newItem = document.createElement("li");
+            newItem.textContent = name;
+            newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete / Eliminar";
+            deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+            deleteButton.addEventListener("click", function(){
+                if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
+                    newItem.remove();
+
+                    const index = clients.indexOf(name);
+                    clients.splice(index, 1);
+                    localStorage.setItem("clients", JSON.stringify(clients));
+                }
+            });
+        
+
+            newItem.appendChild(deleteButton);
+
+            clientList.appendChild(newItem);
+        });
+
+        addButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const name = nameInput.value;
+
+            if (name !== "") {
+                clients.push(name);
+                localStorage.setItem("clients", JSON.stringify(clients));
+                console.log(clients);
+
+                const newItem = document.createElement("li");
+                newItem.textContent = name;
+                newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete / Eliminar";
+                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+                deleteButton.addEventListener("click", function(){
+                    if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
+                        newItem.remove();
+                
+
+                        const index = clients.indexOf(name);
+                        clients.splice(index, 1);
+                        localStorage.setItem("clients", JSON.stringify(clients));
+                    }
+                });
+
+                newItem.appendChild(deleteButton);
+
+                clientList.appendChild(newItem);
+
+                nameInput.value = "";
+                
+                clientError.textContent = "";
+            } else {
+                clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
+            }
+        });
+
+        // ----- Appointment ------
+        const addAppointmentButton = document.getElementById("add-appointment-button");
+        const appointmentClientInput = document.getElementById("appointment-client");
+        const appointmentServiceInput = document.getElementById("appointment-service");
+        const appointmentDateInput = document.getElementById("appointment-date");
+        const appointmentTimeInput = document.getElementById("appointment-time");
+        const appointmentDepositInput = document.getElementById("appointment-deposit");
+        const appointmentList = document.getElementById("appointment-list");
+        const appointmentError = document.getElementById("appointment-error");
+        let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+        appointments.forEach(function (line) {
+            const newAppointmentItem = document.createElement("li");
+            newAppointmentItem.textContent = line;
+            newAppointmentItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete / Eliminar";
+            deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+            
+
+            deleteButton.addEventListener("click", function(){
+                if (confirm("Delete this appointment? / ¿Eliminar esta cita?")) {
+                newAppointmentItem.remove();
+
+                const index = appointments.indexOf(line);
+                appointments.splice(index, 1);
+                localStorage.setItem("appointments", JSON.stringify(appointments));
+                }
+            })
+
+            newAppointmentItem.appendChild(deleteButton);
+
+            appointmentList.appendChild(newAppointmentItem);
+        })
+
+        addAppointmentButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const client = appointmentClientInput.value;
+            const service = appointmentServiceInput.value;
+            const date = appointmentDateInput.value;
+            const time = appointmentTimeInput.value;
+            const deposit = appointmentDepositInput.value;
+
+            if (client !== "" && date !== "" && time !== "") {
+                let depositText;
+                if (deposit !== "" && parseFloat(deposit) > 0) {
+                    depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
+                    
+                    const depositMoneyItem = document.createElement("li");
+                    depositMoneyItem.textContent = "Deposit / Deposito - " + client + " - $" + parseFloat(deposit).toFixed(2);
+                    depositMoneyItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+
+                    const depositDeleteButton = document.createElement("button");
+                    depositDeleteButton.textContent = "Delete / Eliminar";
+                    depositDeleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+                    depositDeleteButton.addEventListener("click", function(){
+                        if (confirm("Delete this deposit? / ¿Eliminar este depósito?")) {
+                            depositMoneyItem.remove();
+
+                            const index = moneyEntries.indexOf("Deposit / Deposito - " + client + " - $" + parseFloat(deposit).toFixed(2));
+                            moneyEntries.splice(index, 1);
+                            localStorage.setItem("money", JSON.stringify(moneyEntries));
+
+                            totalIncome -= parseFloat(deposit);
+                            localStorage.setItem("totalIncome", totalIncome);
+                            totalIncomeDisplay.textContent = totalIncome.toFixed(2);
+
+                            updateProfit();
+                        }
+                    });
+
+                    moneyList.appendChild(depositMoneyItem);
+
+                    depositMoneyItem.appendChild(depositDeleteButton);
+
+                    moneyEntries.push("Deposit / Deposito - " + client + " - $" + parseFloat(deposit).toFixed(2));
+                    localStorage.setItem("money", JSON.stringify(moneyEntries));
+
+                    totalIncome += parseFloat(deposit);
+                    localStorage.setItem("totalIncome", totalIncome);
+                    totalIncomeDisplay.textContent = totalIncome.toFixed(2);
+
+                    updateProfit();
+                } else {
+                    depositText = "No Deposit / Sin depósito";
+                }
+
+                const line = client + " - " + service + " - " + date + " " + time + " - " + depositText;
+                appointments.push(line);
+                localStorage.setItem("appointments", JSON.stringify(appointments));
+
+                const newAppointmentItem = document.createElement("li");
+                newAppointmentItem.textContent = line;
+                newAppointmentItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete / Eliminar";
+                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+                deleteButton.addEventListener("click", function(){
+                    if (confirm("Delete this appointment? / ¿Eliminar esta cita?")) {
+                    newAppointmentItem.remove();
+
+                    const index = appointments.indexOf(line);
+                    appointments.splice(index, 1);
+                    localStorage.setItem("appointments", JSON.stringify(appointments));
+                    }
+                });
+
+
+
+                newAppointmentItem.appendChild(deleteButton);
+
+                appointmentList.appendChild(newAppointmentItem);
+
+                appointmentClientInput.value = "";
+                appointmentServiceInput.value = "";
+                appointmentDateInput.value = "";
+                appointmentTimeInput.value = "";
+                appointmentDepositInput.value = "";
+
+                appointmentError.textContent = "";
+            } else {
+                appointmentError.textContent = "Please fill in client, date and time. / Por favor, completa cliente, fecha y hora.";
+            }
+        });
+
+        //----- Stock -----
+        const addStockButton = document.getElementById("add-stock-button");
+        const stockNameInput = document.getElementById("stock-name");
+        const stockQuantityInput = document.getElementById("stock-quantity");
+        const stockList = document.getElementById("stock-list");
+        const stockError = document.getElementById("stock-error");
+        const lowStockThreshold = 5;
+        let stockItems = JSON.parse(localStorage.getItem("stock")) || [];
+
+        stockItems.forEach(function (item) {
+            const newStockItem = document.createElement("li");
+            newStockItem.textContent = item;
+            newStockItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete / Eliminar";
+            deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+            deleteButton.addEventListener("click", function() {
+                if (confirm("Delete this stock item? / ¿Eliminar este artículo de inventario?")) {
+                newStockItem.remove();
+
+                    const index = stockItems.indexOf(item);
+                    stockItems.splice(index, 1);
+                    localStorage.setItem("stock", JSON.stringify(stockItems));
+                }
+            });
+
+            newStockItem.appendChild(deleteButton);
+            stockList.appendChild(newStockItem);
+        });
+
+        addStockButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const itemName = stockNameInput.value;
+            const quantity = stockQuantityInput.value;
+
+            if (itemName !=="") {
+                stockItems.push(itemName + " - " + quantity);
+                localStorage.setItem("stock", JSON.stringify(stockItems));
+
+                const newStockItem = document.createElement("li");
+                newStockItem.textContent = itemName + " - " + quantity;
+                newStockItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete / Eliminar";
+                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+                deleteButton.addEventListener("click", function(){
+                    if (confirm("Delete this stock item? / ¿Eliminar este artículo de inventario?")) {
+                    newStockItem.remove();
+
+                        const index = stockItems.indexOf(itemName + " - " + quantity);
+                        stockItems.splice(index, 1);
+                        localStorage.setItem("stock", JSON.stringify(stockItems));
+                    }
+                });
+
+            if (parseInt(quantity) < lowStockThreshold) {
+                newStockItem.textContent += " ⚠️ Low stock! / ¡Inventario bajo!";
+                newStockItem.style.color = "red";
+            }
+
+                stockList.appendChild(newStockItem);
+
+                newStockItem.appendChild(deleteButton);
+
+                stockNameInput.value = "";
+                stockQuantityInput.value = "";
+
+                stockError.textContent = "";
+            }   else {
+                stockError.textContent = "Please enter an item name. / Por favor, ingresa el nombre del artículo.";
+            }
+        });
+
+        //------ Money ------
+        const addMoneyButton = document.getElementById("add-money-button");
+        const moneyDescriptionInput = document.getElementById("money-description");
+        const moneyAmountInput = document.getElementById("money-amount");
+        const moneyList = document.getElementById("money-list");
+        const totalIncomeDisplay = document.getElementById("total-income");
+        const moneyError = document.getElementById("money-error");
+        let totalIncome = parseFloat(localStorage.getItem("totalIncome")) || 0;
+        let moneyEntries = JSON.parse(localStorage.getItem("money")) || [];
+
+        moneyEntries.forEach(function (entry) {
+            const newMoneyEntry = document.createElement("li");
+            newMoneyEntry.textContent = entry;
+            newMoneyEntry.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete / Eliminar";
+            deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+            deleteButton.addEventListener("click", function(){
+                if (confirm("Delete this transaction? / ¿Eliminar esta transacción?")) {
+                    newMoneyEntry.remove();
+
+                    const index = moneyEntries.indexOf(entry);
+                    moneyEntries.splice(index, 1);
+                    localStorage.setItem("money", JSON.stringify(moneyEntries));
+
+                    const amountToRemove = parseFloat(entry.split("$")[1]);
+                    totalIncome -= amountToRemove;
+                    localStorage.setItem("totalIncome", totalIncome);
+                    totalIncomeDisplay.textContent = totalIncome.toFixed(2);
+
+                    updateProfit();
+                }
+            });
+
+            newMoneyEntry.appendChild(deleteButton);
+
+            moneyList.appendChild(newMoneyEntry);
+            totalIncomeDisplay.textContent = totalIncome.toFixed(2);
+        });
+
+        addMoneyButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const description = moneyDescriptionInput.value;
+            const amount = moneyAmountInput.value;
+
+                if (description !== "" && amount !== "") {
+                    const newMoneyItem = document.createElement("li");
+                    newMoneyItem.textContent = description + " - $" + parseFloat(amount).toFixed(2);
+                    newMoneyItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete / Eliminar";
+                    deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+                    deleteButton.addEventListener("click", function(){
+                        if (confirm("Delete this transaction? / ¿Eliminar esta transacción?")) {
+                        newMoneyItem.remove();
+
+                        const index = moneyEntries.indexOf(description + " - $" + parseFloat(amount).toFixed(2));
+                        moneyEntries.splice(index, 1);
+                        localStorage.setItem("money", JSON.stringify(moneyEntries));
+
+                        const amountToRemove = parseFloat(amount);
+                        totalIncome -= amountToRemove;
+                        localStorage.setItem("totalIncome", totalIncome);
+                        totalIncomeDisplay.textContent = totalIncome.toFixed(2);
+
+                        updateProfit();
+                    }
+                });
+
+                moneyList.appendChild(newMoneyItem);
+
+                newMoneyItem.appendChild(deleteButton);
+
+
+                moneyEntries.push(description + " - $" + parseFloat(amount).toFixed(2));
+                localStorage.setItem("money", JSON.stringify(moneyEntries));
+
+                totalIncome += parseFloat(amount);
+                localStorage.setItem("totalIncome", totalIncome);
+                totalIncomeDisplay.textContent = totalIncome.toFixed(2);
+
+                updateProfit();
+
+                moneyDescriptionInput.value = "";
+                moneyAmountInput.value = "";
+
+                moneyError.textContent = "";
+            }   else {
+                moneyError.textContent = "Please enter a description and amount. / Por favor, ingresa una descripción y un monto.";
+            }
+        });
+
+        // ----- Service select -----
+        const serviceSelect = document.getElementById("service-select");
+
+        serviceSelect.addEventListener("change", function () {
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const price = selectedOption.dataset.price;
+
+            moneyDescriptionInput.value = serviceSelect.value;
+            moneyAmountInput.value = price || "";
+        })
+        
+        // ----- Expenses -----
+        const addExpenseButton = document.getElementById("add-expense-button");
+        const expenseDescriptionInput = document.getElementById("expense-description");
+        const expenseAmountInput = document.getElementById("expense-amount");
+        const expenseList = document.getElementById("expense-list");
+        const totalExpenseDisplay = document.getElementById("total-expense");
+        const expenseError = document.getElementById("expense-error");
+        let totalExpense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+        let expenseEntries = JSON.parse(localStorage.getItem("expenses")) || [];
+
+        expenseEntries.forEach(function (entry) {
+            const newExpenseItem = document.createElement("li");
+            newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+            newExpenseItem.textContent = entry;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete / Eliminar";
+            deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+            deleteButton.addEventListener("click", function(){
+                if (confirm("Delete this expense? / ¿Eliminar este gasto?")) {
+                    newExpenseItem.remove();
+
+                    const index = expenseEntries.indexOf(entry);
+                    expenseEntries.splice(index, 1);
+                    localStorage.setItem("expenses", JSON.stringify(expenseEntries));
+                
+
+                    const amountToRemove = parseFloat(entry.split("$")[1]);
+                    totalExpense -= amountToRemove;
+                    localStorage.setItem("totalExpense", totalExpense);
+                    totalExpenseDisplay.textContent = totalExpense.toFixed(2);
+
+                    updateProfit();
+                }
+            });
+
+                    expenseList.appendChild(newExpenseItem);
+
+                    newExpenseItem.appendChild(deleteButton);
+        
+            });
+        totalExpenseDisplay.textContent = totalExpense.toFixed(2);
+
+        updateProfit();
+
+        addExpenseButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const description = expenseDescriptionInput.value;
+            const amount = expenseAmountInput.value;
+
+            if (description !== "" && amount !== "") {
+                const newExpenseItem = document.createElement("li");
+                newExpenseItem.textContent = description + " - $" + parseFloat(amount).toFixed(2);
+                newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+                
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete / Eliminar";
+                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+                deleteButton.addEventListener("click", function(){
+                    if (confirm("Delete this expense? / ¿Eliminar este gasto?")) {
+                        newExpenseItem.remove();
+
+                        const index = expenseEntries.indexOf(description + " - $" + parseFloat(amount).toFixed(2));
+                        expenseEntries.splice(index, 1);
+                        localStorage.setItem("expenses", JSON.stringify(expenseEntries));
+
+                        const amountToRemove = parseFloat(amount);
+                        totalExpense -= amountToRemove;
+                        localStorage.setItem("totalExpense", totalExpense);
+                        totalExpenseDisplay.textContent = totalExpense.toFixed(2);
+
+                        updateProfit();
+                    }
+                });
+
+                expenseList.appendChild(newExpenseItem);
+
+                newExpenseItem.appendChild(deleteButton);
+
+                expenseEntries.push(description + " - $" + parseFloat(amount).toFixed(2));
+                localStorage.setItem("expenses", JSON.stringify(expenseEntries));
+
+                totalExpense += parseFloat(amount);
+                localStorage.setItem("totalExpense", totalExpense);
+                totalExpenseDisplay.textContent = totalExpense.toFixed(2);
+
+                updateProfit();
+
+                expenseDescriptionInput.value = "";
+                expenseAmountInput.value = "";
+
+                expenseError.textContent = "";
+            } else {
+                expenseError.textContent = "Please enter a description and amount. / Por favor, ingresa una descripción y un monto.";
+            }
+        });
+
+        // ----- Profit -----
+        function updateProfit() {
+            const profit = totalIncome - totalExpense;
+            totalProfitDisplay.textContent = profit.toFixed(2);
+        }
+    </script>
+</body>
+</html>
