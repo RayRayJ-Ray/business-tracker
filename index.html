@@ -19,8 +19,9 @@
     </script>
 </head>
 <body class="bg-gray-50 p-4">
-    <h1 class="text-3xl font-bold text-center text-brand">My Business Tracker / Control de Mi Negocio</h1>
-
+  <div id="hero" class="bg-cover bg-center rounded-xl flex items-center justify-center transition-all duration-100" style="background-image: url('hero.jpg'); height: 320px;">
+    <h1 class="text-3xl font-bold text-center text-white drop-shadow-lg px-4">My Business Tracker / Control de Mi Negocio</h1>
+  </div>
     <p><a href="https://wa.me/521234567890?text=Hi!%20can%20I%20book%20an%20appointment." target="_blank">Book via WhatsApp / Reservar por WhatsApp</a></p>
 
     <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
@@ -175,7 +176,7 @@
                     localStorage.setItem("clients", JSON.stringify(clients));
                 }
             });
-        
+
 
             newItem.appendChild(deleteButton);
 
@@ -201,7 +202,7 @@
                 deleteButton.addEventListener("click", function(){
                     if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
                         newItem.remove();
-                
+
 
                         const index = clients.indexOf(name);
                         clients.splice(index, 1);
@@ -214,7 +215,7 @@
                 clientList.appendChild(newItem);
 
                 nameInput.value = "";
-                
+
                 clientError.textContent = "";
             } else {
                 clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
@@ -240,7 +241,7 @@
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete / Eliminar";
             deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
-            
+
 
             deleteButton.addEventListener("click", function(){
                 if (confirm("Delete this appointment? / ¿Eliminar esta cita?")) {
@@ -269,7 +270,7 @@
                 let depositText;
                 if (deposit !== "" && parseFloat(deposit) > 0) {
                     depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
-                    
+
                     const depositMoneyItem = document.createElement("li");
                     depositMoneyItem.textContent = "Deposit / Deposito - " + client + " - $" + parseFloat(deposit).toFixed(2);
                     depositMoneyItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
@@ -534,7 +535,7 @@
             moneyDescriptionInput.value = serviceSelect.value;
             moneyAmountInput.value = price || "";
         })
-        
+
         // ----- Expenses -----
         const addExpenseButton = document.getElementById("add-expense-button");
         const expenseDescriptionInput = document.getElementById("expense-description");
@@ -561,7 +562,7 @@
                     const index = expenseEntries.indexOf(entry);
                     expenseEntries.splice(index, 1);
                     localStorage.setItem("expenses", JSON.stringify(expenseEntries));
-                
+
 
                     const amountToRemove = parseFloat(entry.split("$")[1]);
                     totalExpense -= amountToRemove;
@@ -575,7 +576,7 @@
                     expenseList.appendChild(newExpenseItem);
 
                     newExpenseItem.appendChild(deleteButton);
-        
+
             });
         totalExpenseDisplay.textContent = totalExpense.toFixed(2);
 
@@ -590,7 +591,7 @@
                 const newExpenseItem = document.createElement("li");
                 newExpenseItem.textContent = description + " - $" + parseFloat(amount).toFixed(2);
                 newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
-                
+
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete / Eliminar";
                 deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
@@ -639,6 +640,26 @@
             const profit = totalIncome - totalExpense;
             totalProfitDisplay.textContent = profit.toFixed(2);
         }
+
+        // ----- Hero image shrink effect -----
+        const hero = document.getElementById("hero");
+        const heroMaxHeight = 300;
+        const heroMinHeight = 150;
+        const shrinkDistance = 230;
+
+        window.addEventListener("scroll", function(){
+            let scrollAmount = window.scrollY;
+
+            if (scrollAmount > shrinkDistance) {
+                scrollAmount = shrinkDistance;
+            }
+
+            const shrinkPercent = scrollAmount / shrinkDistance;
+            const newHeight = heroMaxHeight - (shrinkPercent * (heroMaxHeight - heroMinHeight));
+
+            hero.style.height = newHeight + "px";
+            hero.style.opacity = 1 - (shrinkPercent * 0.6)
+        })
     </script>
 </body>
 </html>
