@@ -157,70 +157,102 @@
         const nameInput = document.getElementById("client-name");
         const clientList = document.getElementById("client-list");
         let clients = JSON.parse(localStorage.getItem("clients")) || [];
+        let editingClientSpan = null;
 
-        clients.forEach(function(name) {
+clients.forEach(function(name) {
+    const newItem = document.createElement("li");
+    newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = name;
+    newItem.appendChild(nameSpan);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit / Editar";
+    editButton.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+    editButton.addEventListener("click", function() {
+        nameInput.value = nameSpan.textContent;
+        editingClientSpan = nameSpan;
+        addButton.textContent = "Update client / Actualizar cliente";
+    });
+    newItem.appendChild(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete / Eliminar";
+    deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+    deleteButton.addEventListener("click", function(){
+        if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
+            newItem.remove();
+            const index = clients.indexOf(nameSpan.textContent);
+            clients.splice(index, 1);
+            localStorage.setItem("clients", JSON.stringify(clients));
+        }
+    });
+    newItem.appendChild(deleteButton);
+
+    clientList.appendChild(newItem);
+});   
+
+    addButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    const name = nameInput.value;
+
+    if (name !== "") {
+        clientError.textContent = "";
+
+        if (editingClientSpan !== null) {
+            const index = clients.indexOf(editingClientSpan.textContent);
+            clients[index] = name;
+            localStorage.setItem("clients", JSON.stringify(clients));
+
+            editingClientSpan.textContent = name;
+
+            editingClientSpan = null;
+            addButton.textContent = "Add client / Agregar cliente";
+            nameInput.value = "";
+        } else {
+            clients.push(name);
+            localStorage.setItem("clients", JSON.stringify(clients));
+            console.log(clients);
+
             const newItem = document.createElement("li");
-            newItem.textContent = name;
             newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.textContent = name;
+            newItem.appendChild(nameSpan);
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit / Editar";
+            editButton.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+            editButton.addEventListener("click", function() {
+                nameInput.value = nameSpan.textContent;
+                editingClientSpan = nameSpan;
+                addButton.textContent = "Update client / Actualizar cliente";
+            });
+            newItem.appendChild(editButton);
 
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete / Eliminar";
             deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
-
             deleteButton.addEventListener("click", function(){
                 if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
                     newItem.remove();
-
-                    const index = clients.indexOf(name);
+                    const index = clients.indexOf(nameSpan.textContent);
                     clients.splice(index, 1);
                     localStorage.setItem("clients", JSON.stringify(clients));
                 }
             });
-
-
             newItem.appendChild(deleteButton);
 
             clientList.appendChild(newItem);
-        });
 
-        addButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            const name = nameInput.value;
-
-            if (name !== "") {
-                clients.push(name);
-                localStorage.setItem("clients", JSON.stringify(clients));
-                console.log(clients);
-
-                const newItem = document.createElement("li");
-                newItem.textContent = name;
-                newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete / Eliminar";
-                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
-                deleteButton.addEventListener("click", function(){
-                    if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
-                        newItem.remove();
-
-
-                        const index = clients.indexOf(name);
-                        clients.splice(index, 1);
-                        localStorage.setItem("clients", JSON.stringify(clients));
-                    }
-                });
-
-                newItem.appendChild(deleteButton);
-
-                clientList.appendChild(newItem);
-
-                nameInput.value = "";
-
-                clientError.textContent = "";
-            } else {
-                clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
-            }
-        });
+            nameInput.value = "";
+        }
+    } else {
+        clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
+    }
+});
 
         // ----- Appointment ------
         const addAppointmentButton = document.getElementById("add-appointment-button");
