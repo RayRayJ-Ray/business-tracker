@@ -81,38 +81,6 @@
                 <label for="service-select">Quick-select a service / Seleccionar servicio:</label>
     <select id="service-select" class="w-full border border-gray-300 rounded-lg p-3">
         <option value="">Select a service / Seleccionar un servicio ---</option>
-        <optgroup label="General">
-            <option value="Pedicure" data-price="400">Pedicure / Pedicura - $400 MXN</option>
-            <option value="Nails" data-price="300">Nails / Uñas - $300 MXN</option>
-            <option value="Rubber" data-price="200">Rubber - $200 MXN</option>
-            <option value="Gelish" data-price="150">Gelish - $150 MXN</option>
-            <option value="Gelish feet" data-price="200">Gelish feet / Gelish pies - $200 MXN</option>
-            <option value="Facial" data-price="350">Facial - $350 MXN</option>
-            <option value="Facial with dermapan" data-price="500">Facial with dermapan / Facial con dermapan - $500 MXN</option>
-            <option value="Lash lifting" data-price="200">Lash lifting / Lifting de pestañas - $200 MXN</option>
-            <option value="eyebrows" data-price="200">eyebrows / Cejas - $200 MXN</option>
-        </optgroup>
-        <optgroup label="Waxing / Depilación">
-            <option value="Wax eyebrows" data-price="100">Wax eyebrows / Cera en cejas -$100 MXN</option>
-            <option value="Wax mustache" data-price="100">Wax mustache / Cera en bigote -$100 MXN</option>
-            <option value="Wax half face" data-price="180">Wax half face / Cera en medio rostro -$180 MXN</option>
-            <option value="Wax armpit" data-price="100">Wax armpit / Cera en axila - $100 MXN</option>
-            <option value="Wax full arm" data-price="220">Wax full arm / Cera en brazo completo - $220 MXN</option>
-            <option value="Wax half arm" data-price="150">Wax half arm / Cera en mitad de brazo - $150 MXN</option>
-            <option value="Wax stomach" data-price="60">Wax stomach / Cera en estómago - $60 MXN</option>
-            <option value="Wax half back" data-price="150">Wax half back / Cera en mitad de espalda -$150 MXN</option>
-            <option value="Wax bikini" data-price="200">Wax bikini / Cera en bikini - $200 MXN</option>
-            <option value="Wax legs" data-price="320">Wax legs / Cera en piernas - $320 MXN</option>
-            <option value="Wax half leg" data-price="220">Wax half leg / Cera en media pierna - $220 MXN</option>
-        </optgroup>
-        <optgroup label="Hair / Cabello">
-            <option value="Hair" data-price="990">Hair / Cabello - $990 MXN</option>
-            <option value="Progressive multivitamin straigthening" data-price="990">Progressive multivitamin straightning / Alisado progresivo multivitamínico - $990 MXN</option>
-            <option value="Striaghtening reactivator" data-price="350">Straigthening reactivator / Reactivador de alisado - $350 MXN</option>
-            <option value="Intensive hair repair" data-price="550">Intensive hair repair / Reparación intensiva de cabello - $550 MXN</option>
-            <option value="Hair rescue ampoule" data-price="250">Hair rescue ampoule / Ampolla de rescate capilar - $250 MXN</option>
-            <option value="Express hairstyle" data-price="200">Express hairstyle / Peinado exprés (precio varía, $200-$300 MXN)</option>
-        </optgroup>
     </select>
             <label for="money-description">Description / Descripción:</label>
             <input type="text" id="money-description" class="w-full border border-gray-300 rounded-lg p-3">
@@ -151,10 +119,35 @@
         // ----- Service catalog -----
         // price in MXN, duration in minutes
         const services = [
-            { name: "Pedicure / Pedicura", price: 400, duration: 60, category: "General" },
-            { name: "Nails / Uñas", price: 200, duration: 30, category: "General" },
-            { name: "Wax eyebrows / Cera en cejas", price: 100, duration: 15, category: "Waxing / Depilation" }
+            { name: "Pedicure / Pedicura", price: 400, duration: 120, category: "General" },
+            { name: "Nails / Uñas", price: 300, duration: 120, category: "General" },
+            { name: "Rubber", price: 200, duration: 60, category: "General" },
+            { name: "Gelish", price: 150, duration: 60, category: "General" },
+            { name: "Gelish feet / Gelish pies", price: 200, duration: 60, category: "General" },
+            { name: "Facial", price: 350, duration: 90, category: "General" },
+            { name: "Facial with dermapan / Facial con dermapan", price: 500, duration: 90, category: "General" },
+            { name: "Lash lifting / lifting de pestañas", price: 200, duration: 60, category: "General" },
+            { name: "eyebrows / Cejas", price: 200, duration: 60, category: "General" },
+            { name: "Wax eyebrows / Cera en cejas", price: 100, duration: 40, category: "Waxing / Depilation" },
+            { name: "Wax mustache / Cera en bigote", price: 100, duration: 30, category: "Waxing / Depilation" },
+            { name:"Wax half face", price: 180, duration:30, category: "Waxing / Depilation" },
+            { name: "Wax armpit / Cera en axila", price: 100, duration: 30, category: "Waxing / Depilation" },
+            { name: "Wax full arm / Cera en brazo completo", price: 220, duration: 60, category: "Waxing / Depilation" },
+            { name: "Wax half arm / Cera en mitad brazo", price: 150, duration: 60, category: "Waxing / Depilation" },
+            { name: "Wax stomach / Cera en estómago", price: 60, duration: 60, category: "Waxing / Depilation" },
+            { name: "Wax half back / Cera en mitad espalda", price: 150, duration: 60, category: "Waxing / Depilation" },
+            { name: "Wax bikini / Cera en bikini", price: 200, duration: 60, category: "Waxing / Depilation" },
+            { name: "Wax legs / Cera en piernas", price: 320, duration: 90, category: "Waxing / Depilation" },
+            { name: "Wax half leg / Cera en mitad pierna", price: 220, duration: 60, category: "Waxing / Depilation" },
+            { name: "Hair / Cabello", price: 990, duration: 180, category: "Hair / Cabello" },
+            { name: "Progressive multivitamin straightening", price: 990, duration: 180, category: "Hair / Cabello" },
+            { name: "Straightening reactivator / Reactivador de alisado", price: 350, duration: 90, category: "Hair / Cabello" },
+            { name: "Intensive hair repair / Reparación intensiva del cabello", price: 550, duration: 120, category: "Hair / Cabello" },
+            { name: "Hair recuse ampoule / Ampolla de recuperación del cabello", price: 250, duration: 60, category: "Hair / Cabello" },
+            {name: "Express hairstyle / Peinado express", price: 200, maxPrice: 300,duration: 90, category: "Hair / Cabello"}
         ];
+
+        const categories = ["General", "Waxing / Depilation", "Hair / Cabello"];
 
         console.log(services);
         console.log(services[0].name);
@@ -584,13 +577,29 @@
         // ----- Service select -----
         const serviceSelect = document.getElementById("service-select");
 
+        categories.forEach(function (category){
+            const group = document.createElement("optgroup");
+            group.label = category;
+            serviceSelect.appendChild(group);
+
+            services.forEach(function (service){
+                if (service.category === category) {
+                    const option = document.createElement("option");
+                    option.value = service.name;
+                    option.dataset.price = service.price;
+                    option.textContent = service.name + " - $" + service.price + " MXN";
+                    group.appendChild(option);
+                }
+            });
+        });
+
         serviceSelect.addEventListener("change", function () {
             const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
             const price = selectedOption.dataset.price;
 
             moneyDescriptionInput.value = serviceSelect.value;
             moneyAmountInput.value = price || "";
-        })
+        });
 
         // ----- Expenses -----
         const addExpenseButton = document.getElementById("add-expense-button");
