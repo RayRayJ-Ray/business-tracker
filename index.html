@@ -148,6 +148,17 @@
 
 
     <script>
+        // ----- Service catalog -----
+        // price in MXN, duration in minutes
+        const services = [
+            { name: "Pedicure / Pedicura", price: 400, duration: 60, category: "General" },
+            { name: "Nails / Uñas", price: 200, duration: 30, category: "General" },
+            { name: "Wax eyebrows / Cera en cejas", price: 100, duration: 15, category: "Waxing / Depilation" }
+        ];
+
+        console.log(services);
+        console.log(services[0].name);
+        console.log(services[0].price);
 
         const totalProfitDisplay = document.getElementById("total-profit");
 
@@ -159,62 +170,7 @@
         let clients = JSON.parse(localStorage.getItem("clients")) || [];
         let editingClientSpan = null;
 
-clients.forEach(function(name) {
-    const newItem = document.createElement("li");
-    newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
-
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = name;
-    newItem.appendChild(nameSpan);
-
-    const editButton = document.createElement("button");
-    editButton.textContent = "Edit / Editar";
-    editButton.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
-    editButton.addEventListener("click", function() {
-        nameInput.value = nameSpan.textContent;
-        editingClientSpan = nameSpan;
-        addButton.textContent = "Update client / Actualizar cliente";
-    });
-    newItem.appendChild(editButton);
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete / Eliminar";
-    deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
-    deleteButton.addEventListener("click", function(){
-        if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
-            newItem.remove();
-            const index = clients.indexOf(nameSpan.textContent);
-            clients.splice(index, 1);
-            localStorage.setItem("clients", JSON.stringify(clients));
-        }
-    });
-    newItem.appendChild(deleteButton);
-
-    clientList.appendChild(newItem);
-});   
-
-    addButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    const name = nameInput.value;
-
-    if (name !== "") {
-        clientError.textContent = "";
-
-        if (editingClientSpan !== null) {
-            const index = clients.indexOf(editingClientSpan.textContent);
-            clients[index] = name;
-            localStorage.setItem("clients", JSON.stringify(clients));
-
-            editingClientSpan.textContent = name;
-
-            editingClientSpan = null;
-            addButton.textContent = "Add client / Agregar cliente";
-            nameInput.value = "";
-        } else {
-            clients.push(name);
-            localStorage.setItem("clients", JSON.stringify(clients));
-            console.log(clients);
-
+        clients.forEach(function(name) {
             const newItem = document.createElement("li");
             newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
 
@@ -246,13 +202,68 @@ clients.forEach(function(name) {
             newItem.appendChild(deleteButton);
 
             clientList.appendChild(newItem);
+        });   
 
-            nameInput.value = "";
-        }
-    } else {
-        clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
-    }
-});
+            addButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const name = nameInput.value;
+
+            if (name !== "") {
+                clientError.textContent = "";
+
+                if (editingClientSpan !== null) {
+                    const index = clients.indexOf(editingClientSpan.textContent);
+                    clients[index] = name;
+                    localStorage.setItem("clients", JSON.stringify(clients));
+
+                    editingClientSpan.textContent = name;
+
+                    editingClientSpan = null;
+                    addButton.textContent = "Add client / Agregar cliente";
+                    nameInput.value = "";
+                } else {
+                    clients.push(name);
+                    localStorage.setItem("clients", JSON.stringify(clients));
+                    console.log(clients);
+
+                    const newItem = document.createElement("li");
+                    newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+                    const nameSpan = document.createElement("span");
+                    nameSpan.textContent = name;
+                    newItem.appendChild(nameSpan);
+
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit / Editar";
+                    editButton.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+                    editButton.addEventListener("click", function() {
+                        nameInput.value = nameSpan.textContent;
+                        editingClientSpan = nameSpan;
+                        addButton.textContent = "Update client / Actualizar cliente";
+                    });
+                    newItem.appendChild(editButton);
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete / Eliminar";
+                    deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+                    deleteButton.addEventListener("click", function(){
+                        if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
+                            newItem.remove();
+                            const index = clients.indexOf(nameSpan.textContent);
+                            clients.splice(index, 1);
+                            localStorage.setItem("clients", JSON.stringify(clients));
+                        }
+                    });
+                    newItem.appendChild(deleteButton);
+
+                    clientList.appendChild(newItem);
+
+                    nameInput.value = "";
+                }
+            } else {
+                clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
+            }
+        });
 
         // ----- Appointment ------
         const addAppointmentButton = document.getElementById("add-appointment-button");
@@ -392,7 +403,19 @@ clients.forEach(function(name) {
         const stockError = document.getElementById("stock-error");
         const lowStockThreshold = 5;
         let stockItems = JSON.parse(localStorage.getItem("stock")) || [];
+        let editingStockSpan = null;
 
+        stockItem.foreach(function (item){
+            const parts = item.split(" - ");
+            const itemName = parts[0];
+            const quantity = parts[1];
+
+            const newStockItem = document.createElement("li");
+            newStcokItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+            const itemSpan =
+        })
+        
         stockItems.forEach(function (item) {
             const newStockItem = document.createElement("li");
             newStockItem.textContent = item;
