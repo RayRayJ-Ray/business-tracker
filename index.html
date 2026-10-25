@@ -304,8 +304,12 @@
                 const chosenService = services.find(function (item) {
                     return item.name === service;
                 });
-                console.log(chosenService);
-                
+
+                const parts = time.split(":");
+                const startMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                const endMinutes = startMinutes + chosenService.duration;
+                console.log(startMinutes, endMinutes);
+
                 let depositText;
                 if (deposit !== "" && parseFloat(deposit) > 0) {
                     depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
