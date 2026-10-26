@@ -322,9 +322,9 @@
                     client: client,
                     service: service,
                     date: date,
-                    start: start,
-                    end: end,
-                    deposit: parseFloat(deposit)
+                    start: time,
+                    end: endTime,
+                    deposit: parseFloat(deposit) || 0
                 };
 
                 console.log(appointment);
