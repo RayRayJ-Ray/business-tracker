@@ -308,7 +308,15 @@
                 const parts = time.split(":");
                 const startMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
                 const endMinutes = startMinutes + chosenService.duration;
-                console.log(startMinutes, endMinutes);
+                let endHours = Math.floor(endMinutes / 60);
+                let endMins = endMinutes % 60;
+                if (endHours < 10) {
+                    endHours = "0" + endHours;
+                }
+                if (endMins < 10) {
+                    endMins = "0" + endMins;
+                }
+                const endTime = endHours + ":" + endMins;
 
                 let depositText;
                 if (deposit !== "" && parseFloat(deposit) > 0) {
@@ -355,7 +363,7 @@
                     depositText = "No Deposit / Sin depósito";
                 }
 
-                const line = client + " - " + service + " - " + date + " " + time + " - " + depositText;
+                const line = client + " - " + service + " - " + date + " " + time + "-" + endTime + " - " + depositText;
                 appointments.push(line);
                 localStorage.setItem("appointments", JSON.stringify(appointments));
 
