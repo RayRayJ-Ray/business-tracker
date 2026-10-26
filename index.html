@@ -318,6 +318,17 @@
                 }
                 const endTime = endHours + ":" + endMins;
 
+                const appointment = {
+                    client: client,
+                    service: service,
+                    date: date,
+                    start: start,
+                    end: end,
+                    deposit: parseFloat(deposit)
+                };
+
+                console.log(appointment);
+
                 let depositText;
                 if (deposit !== "" && parseFloat(deposit) > 0) {
                     depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
