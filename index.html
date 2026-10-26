@@ -267,9 +267,22 @@
         const appointmentError = document.getElementById("appointment-error");
         let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
 
+        function appointmentText(appointment) {
+            let depositText = "No Deposit / Sin Depósito";
+            if (appointment.deposit > 0) {
+                depositText = "Deposit / Depósito: $" + appointment.deposit.toFixed(2);
+            }
+            return appointment.client + " - " + appointment.service + " - " + appointment.date + " " + appointment.start + "-" + appointment.end + " - " + depositText;
+        }
+
         appointments.forEach(function (line) {
+            let text = line;
+            if (line.client) {
+                text = appointmentText(line);
+            }
+
             const newAppointmentItem = document.createElement("li");
-            newAppointmentItem.textContent = line;
+            newAppointmentItem.textContent = text;
             newAppointmentItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
 
             const deleteButton = document.createElement("button");
@@ -327,8 +340,6 @@
                     deposit: parseFloat(deposit) || 0
                 };
 
-                console.log(appointment);
-
                 let depositText;
                 if (deposit !== "" && parseFloat(deposit) > 0) {
                     depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
@@ -374,8 +385,8 @@
                     depositText = "No Deposit / Sin depósito";
                 }
 
-                const line = client + " - " + service + " - " + date + " " + time + "-" + endTime + " - " + depositText;
-                appointments.push(line);
+                const line = appointmentText(appointment);
+                appointments.push(appointment);
                 localStorage.setItem("appointments", JSON.stringify(appointments));
 
                 const newAppointmentItem = document.createElement("li");
@@ -390,7 +401,9 @@
                     if (confirm("Delete this appointment? / ¿Eliminar esta cita?")) {
                     newAppointmentItem.remove();
 
-                    const index = appointments.indexOf(line);
+                    //const index = appointments.indexOf(line); // old code
+                    
+                    const index = appointments.indexOf(appointment);
                     appointments.splice(index, 1);
                     localStorage.setItem("appointments", JSON.stringify(appointments));
                     }
