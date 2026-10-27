@@ -287,19 +287,37 @@
             return "";
         }
 
+        function formatDay(date) {
+            const dateObject = new Date(date + "T00:00");
+            const options = { weekday: "long", month: "long", day:"numeric"};
+            const english = dateObject.toLocaleDateString("en-UK", options);
+            const spanish = dateObject.toLocaleDateString("es-MX", options);
+            return english + " / " + spanish;
+        }
+
         function showAppointments() {
             appointmentList.textContent = "";
         
 
-        appointments.sort(function (a, b) {
-            return sortKey(a).localeCompare(sortKey(b));
-        });
+            appointments.sort(function (a, b) {
+                return sortKey(a).localeCompare(sortKey(b));
+            });
 
-        appointments.forEach(function (line) {
-            let text = line;
-            if (line.client) {
-                text = appointmentText(line);
-            }
+            let lastDate = "";
+
+            appointments.forEach(function (line) {
+                let text = line;
+                if (line.client) {
+                    text = appointmentText(line);
+                }
+
+                if (line.client && line.date !== lastDate) {
+                    const dayHeading = document.createElement("li");
+                    dayHeading.textContent = formatDay(line.date);
+                    dayHeading.className = "font-bold text-brand pt-4";
+                    appointmentList.appendChild(dayHeading);
+                    lastDate = line.date;
+                }
 
             const newAppointmentItem = document.createElement("li");
             newAppointmentItem.textContent = text;
@@ -312,18 +330,18 @@
 
             deleteButton.addEventListener("click", function(){
                 if (confirm("Delete this appointment? / ¿Eliminar esta cita?")) {
-                newAppointmentItem.remove();
-
                 const index = appointments.indexOf(line);
                 appointments.splice(index, 1);
                 localStorage.setItem("appointments", JSON.stringify(appointments));
+
+                showAppointments();
                 }
-            })
+            });
 
             newAppointmentItem.appendChild(deleteButton);
 
             appointmentList.appendChild(newAppointmentItem);
-            })
+            });
         }
 
         showAppointments();
@@ -358,7 +376,7 @@
                 });
 
                 if (clash) {
-                    const addAnyway = confirm("This overlaps with / Se cruza con: " + appointmentText(clash) + ". Add it anyway? / Agregarla de todos modos?");
+                    const addAnyway = confirm("This overlaps with / Se cruza con: " + appointmentText(clash) + ". Add it anyway? / ¿Agregarla de todos modos?");
                     if (!addAnyway) {
                         return;
                     }
@@ -418,35 +436,10 @@
                     depositText = "No Deposit / Sin depósito";
                 }
 
-                const line = appointmentText(appointment);
                 appointments.push(appointment);
                 localStorage.setItem("appointments", JSON.stringify(appointments));
 
-                const newAppointmentItem = document.createElement("li");
-                newAppointmentItem.textContent = line;
-                newAppointmentItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete / Eliminar";
-                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
-
-                deleteButton.addEventListener("click", function(){
-                    if (confirm("Delete this appointment? / ¿Eliminar esta cita?")) {
-                    newAppointmentItem.remove();
-
-                    //const index = appointments.indexOf(line); // old code
-                    
-                    const index = appointments.indexOf(appointment);
-                    appointments.splice(index, 1);
-                    localStorage.setItem("appointments", JSON.stringify(appointments));
-                    }
-                });
-
-
-
-                newAppointmentItem.appendChild(deleteButton);
-
-                appointmentList.appendChild(newAppointmentItem);
+                showAppointments();
 
                 appointmentClientInput.value = "";
                 appointmentServiceInput.value = "";
