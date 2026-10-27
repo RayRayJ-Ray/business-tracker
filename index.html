@@ -275,6 +275,11 @@
             return appointment.client + " - " + appointment.service + " - " + appointment.date + " " + appointment.start + "-" + appointment.end + " - " + depositText;
         }
 
+        function toMinutes(time) {
+            const parts = time.split(":");
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
         appointments.forEach(function (line) {
             let text = line;
             if (line.client) {
@@ -318,8 +323,7 @@
                     return item.name === service;
                 });
 
-                const parts = time.split(":");
-                const startMinutes = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                const startMinutes = toMinutes(time);
                 const endMinutes = startMinutes + chosenService.duration;
                 let endHours = Math.floor(endMinutes / 60);
                 let endMins = endMinutes % 60;
@@ -330,6 +334,17 @@
                     endMins = "0" + endMins;
                 }
                 const endTime = endHours + ":" + endMins;
+
+                const clash = appointments.find(function (other) {
+                    return other.date === date && startMinutes < toMinutes(other.end) && endMinutes > toMinutes(other.start);
+                });
+
+                if (clash) {
+                    const addAnyway = confirm("This overlaps with / Se cruza con: " + appointmentText(clash) + ". Add it anyway? / Agregarla de todos modos?");
+                    if (!addAnyway) {
+                        return;
+                    }
+                }
 
                 const appointment = {
                     client: client,
