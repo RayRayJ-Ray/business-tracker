@@ -280,6 +280,21 @@
             return parseInt(parts[0]) * 60 + parseInt(parts[1]);
         }
 
+        function sortKey(appointment) {
+            if (appointment.client) {
+                return appointment.date + " " + appointment.start;
+            }
+            return "";
+        }
+
+        function showAppointments() {
+            appointmentList.textContent = "";
+        
+
+        appointments.sort(function (a, b) {
+            return sortKey(a).localeCompare(sortKey(b));
+        });
+
         appointments.forEach(function (line) {
             let text = line;
             if (line.client) {
@@ -308,7 +323,10 @@
             newAppointmentItem.appendChild(deleteButton);
 
             appointmentList.appendChild(newAppointmentItem);
-        })
+            })
+        }
+
+        showAppointments();
 
         addAppointmentButton.addEventListener("click", function (event) {
             event.preventDefault();
