@@ -161,6 +161,9 @@
         let clients = JSON.parse(localStorage.getItem("clients")) || [];
         let editingClientSpan = null;
 
+        function showClients() {
+            clientList.textContent = "";
+
         clients.forEach(function(name) {
             const newItem = document.createElement("li");
             newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
@@ -193,7 +196,11 @@
             newItem.appendChild(deleteButton);
 
             clientList.appendChild(newItem);
-        });   
+        });
+
+            }
+
+            showClients();
 
             addButton.addEventListener("click", function (event) {
             event.preventDefault();
@@ -272,7 +279,7 @@
             if (appointment.deposit > 0) {
                 depositText = "Deposit / Depósito: $" + appointment.deposit.toFixed(2);
             }
-            return appointment.client + " - " + appointment.service + " - " + appointment.date + " " + appointment.start + "-" + appointment.end + " - " + depositText;
+            return appointment.start + " - " + appointment.end + " - " + appointment.client + " - " + appointment.service + " - " + depositText;
         }
 
         function toMinutes(time) {
@@ -290,7 +297,7 @@
         function formatDay(date) {
             const dateObject = new Date(date + "T00:00");
             const options = { weekday: "long", month: "long", day:"numeric"};
-            const english = dateObject.toLocaleDateString("en-UK", options);
+            const english = dateObject.toLocaleDateString("en-GB", options);
             const spanish = dateObject.toLocaleDateString("es-MX", options);
             return english + " / " + spanish;
         }
@@ -303,9 +310,15 @@
                 return sortKey(a).localeCompare(sortKey(b));
             });
 
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
             let lastDate = "";
 
             appointments.forEach(function (line) {
+                if (line.client && new Date(line.date + "T00:00") < today) {
+                    return;
+                }
                 let text = line;
                 if (line.client) {
                     text = appointmentText(line);
