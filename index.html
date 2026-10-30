@@ -406,8 +406,16 @@
 
                 let number = "";
                 if (savedClient && savedClient.phone) {
-                    number = "52" + savedClient.phone.replace
+                    number = "52" + savedClient.phone.replace(/\D/g, '');
                 }
+
+                const remindLink = document.createElement("a");
+                remindLink.textContent = "Remind / Recordar";
+                remindLink.href = "https://wa.me/" + number +"?text=" + encodeURIComponent(reminderText(line));
+                remindLink.target = "_blank";
+                remindLink.className = "ml-auto mr-2 bg-green-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+                newAppointmentItem.appendChild(remindLink);
+
             }
 
             newAppointmentItem.appendChild(deleteButton);
