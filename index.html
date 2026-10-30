@@ -340,6 +340,16 @@
             return english + " / " + spanish;
         }
 
+        function reminderText(appointment) {
+            const options = { weekday: "long", month: "long", day: "numeric" };
+            const day = new Date(appointment.date + "T00:00").toLocaleDateString("es-MX", options);
+            const service = appointment.service.split(" / ").pop();
+
+            const greeting = "Hola " + appointment.client + ", te recuerdo tu cita de " + service + " el " + day + " a las " + appointment.start + ".";
+            const request = "Si tienes otro compromiso o no vas a poder venir, por favor avísanos con tiempo para poder ofrecer el horario a alguien más. ¡Gracias!";
+            return greeting + " " + request;
+        }
+
         function showAppointments() {
             appointmentList.textContent = "";
         
@@ -388,6 +398,17 @@
                 showAppointments();
                 }
             });
+
+            if (line.client) {
+                const savedClient = clients.find(function (client) {
+                    return client.name ===line.client;
+                });
+
+                let number = "";
+                if (savedClient && savedClient.phone) {
+                    number = "52" + savedClient.phone.replace
+                }
+            }
 
             newAppointmentItem.appendChild(deleteButton);
 
