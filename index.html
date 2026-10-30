@@ -29,6 +29,8 @@
         <form class="flex flex-col gap-4">
             <label for="client-name">Client name / Nombre del cliente:</label>
             <input type="text" id="client-name" class="w-full border border-gray-300 rounded-lg p-3">
+            <label for="client-phone">Phone / Teléfono:</label>
+            <input type="tel" id="client-phone" class="w-full border border-gray-300 rounded-lg p-3">
             <button id="add-client-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add client / Agregar cliente</button>
             <p id="client-error" class="text-red-600"></p>
         </form>
@@ -40,7 +42,8 @@
         <h2>Appointments / Citas</h2>
         <form class="flex flex-col gap-4">
             <label for="appointment-client">Client / Cliente:</label>
-            <input type="text" id="appointment-client" class="w-full border border-gray-300 rounded-lg p-3">
+            <input type="text" id="appointment-client" list="client-options" class="w-full border border-gray-300 rounded-lg p-3">
+            <datalist id="client-options"></datalist>
 
             <label for="appointment-service">Service / Servicio:</label>
             <select id="appointment-service" class="w-full border border-gray-300 rounded-lg p-3">
@@ -157,27 +160,47 @@
         const clientError = document.getElementById("client-error");
         const addButton = document.getElementById("add-client-button");
         const nameInput = document.getElementById("client-name");
+        const phoneInput = document.getElementById("client-phone");
         const clientList = document.getElementById("client-list");
+        const clientOptions = document.getElementById("client-options");
         let clients = JSON.parse(localStorage.getItem("clients")) || [];
-        let editingClientSpan = null;
+        clients = clients.map(function (client) {
+            if (client.name) {
+                return client;
+            }
+            return { name: client };
+        });
+        let editingClient = null;
 
         function showClients() {
             clientList.textContent = "";
+            clientOptions.textContent = "";
 
-        clients.forEach(function(name) {
+        clients.forEach(function(client) {
             const newItem = document.createElement("li");
             newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
 
             const nameSpan = document.createElement("span");
-            nameSpan.textContent = name;
+            nameSpan.textContent = client.name;
+            if (client.phone) {
+                nameSpan.textContent = client.name + " - ";
+                
+                const phoneLink = document.createElement("a");
+                phoneLink.textContent = client.phone;
+                phoneLink.href = "https://wa.me/52" + client.phone.replace(/\D/g, "");
+                phoneLink.target = "_blank";
+                phoneLink.className = "text-brand underline";
+                nameSpan.appendChild(phoneLink);
+            }
             newItem.appendChild(nameSpan);
 
             const editButton = document.createElement("button");
             editButton.textContent = "Edit / Editar";
             editButton.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
             editButton.addEventListener("click", function() {
-                nameInput.value = nameSpan.textContent;
-                editingClientSpan = nameSpan;
+                nameInput.value = client.name;
+                phoneInput.value = client.phone || "";
+                editingClient = client;
                 addButton.textContent = "Update client / Actualizar cliente";
             });
             newItem.appendChild(editButton);
@@ -187,15 +210,22 @@
             deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
             deleteButton.addEventListener("click", function(){
                 if (confirm("Delete this client? / ¿Eliminar este cliente?")) {
-                    newItem.remove();
-                    const index = clients.indexOf(nameSpan.textContent);
+                    //newItem.remove();
+                    const index = clients.indexOf(client);
                     clients.splice(index, 1);
                     localStorage.setItem("clients", JSON.stringify(clients));
                 }
+
+                showClients();
+                
             });
             newItem.appendChild(deleteButton);
 
             clientList.appendChild(newItem);
+
+            const option = document.createElement("option");
+            option.value = client.name;
+            clientOptions.appendChild(option);
         });
 
             }
@@ -209,20 +239,26 @@
             if (name !== "") {
                 clientError.textContent = "";
 
-                if (editingClientSpan !== null) {
-                    const index = clients.indexOf(editingClientSpan.textContent);
-                    clients[index] = name;
+                if (editingClient !== null) {
+                    const index = clients.indexOf(editingClient);
+                    clients[index] = { name: name, phone: phoneInput.value };
                     localStorage.setItem("clients", JSON.stringify(clients));
 
-                    editingClientSpan.textContent = name;
+                    showClients();
 
-                    editingClientSpan = null;
+                    //editingClient.textContent = name;
+
+                    editingClient = null;
                     addButton.textContent = "Add client / Agregar cliente";
                     nameInput.value = "";
+                    phoneInput.value = "";
                 } else {
-                    clients.push(name);
+                    clients.push({ name: name, phone: phoneInput.value });
                     localStorage.setItem("clients", JSON.stringify(clients));
-                    console.log(clients);
+
+                    showClients();
+
+                    /*console.log(clients);
 
                     const newItem = document.createElement("li");
                     newItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
@@ -236,7 +272,7 @@
                     editButton.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
                     editButton.addEventListener("click", function() {
                         nameInput.value = nameSpan.textContent;
-                        editingClientSpan = nameSpan;
+                        editingClient = nameSpan;
                         addButton.textContent = "Update client / Actualizar cliente";
                     });
                     newItem.appendChild(editButton);
@@ -255,8 +291,10 @@
                     newItem.appendChild(deleteButton);
 
                     clientList.appendChild(newItem);
-
+                  */  
                     nameInput.value = "";
+
+                    phoneInput.value = "";
                 }
             } else {
                 clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
