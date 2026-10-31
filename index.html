@@ -31,6 +31,8 @@
             <input type="text" id="client-name" class="w-full border border-gray-300 rounded-lg p-3">
             <label for="client-phone">Phone / Teléfono:</label>
             <input type="tel" id="client-phone" class="w-full border border-gray-300 rounded-lg p-3">
+            <label for="client-notes">Notes / Notas:</label>
+            <textarea id="client-notes" class="w-full border border-gray-300 rounded-lg p-3"></textarea>
             <button id="add-client-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add client / Agregar cliente</button>
             <p id="client-error" class="text-red-600"></p>
         </form>
@@ -60,6 +62,7 @@
             <input type="number" id="appointment-deposit" min="0" step="0.01" class="w-full border border-gray-300 rounded-lg p-3">
 
             <button id="add-appointment-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add appointment / Agregar cita</button>
+            <button id="cancel-appointment-button" class="hidden w-full bg-gray-500 text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Cancel / Cancelar</button>
             <p id="appointment-error" class="text-red-600"></p>
         </form>
         <ul id="appointment-list"></ul>
@@ -161,6 +164,7 @@
         const addButton = document.getElementById("add-client-button");
         const nameInput = document.getElementById("client-name");
         const phoneInput = document.getElementById("client-phone");
+        const notesInput = document.getElementById("client-notes");
         const clientList = document.getElementById("client-list");
         const clientOptions = document.getElementById("client-options");
         let clients = JSON.parse(localStorage.getItem("clients")) || [];
@@ -192,6 +196,25 @@
                 phoneLink.className = "text-brand underline";
                 nameSpan.appendChild(phoneLink);
             }
+
+            if (client.notes) {
+                const notesLine = document.createElement("span");
+                notesLine.textContent = client.notes;
+                notesLine.className = "block text-sm text-gray-500";
+                nameSpan.appendChild(notesLine);
+            }
+
+            const clientAppointments = appointments.filter(function(appointment) {
+                return appointment.client === client.name;
+            });
+
+            clientAppointments.forEach(function (appointment) {
+                const visitLine = document.createElement("span");
+                visitLine.textContent = appointment.date + " " + appointment.start + " - " + appointment.service;
+                visitLine.className = "block text-sm text-gray-500"
+                nameSpan.appendChild(visitLine);
+            });
+
             newItem.appendChild(nameSpan);
 
             const editButton = document.createElement("button");
@@ -200,6 +223,7 @@
             editButton.addEventListener("click", function() {
                 nameInput.value = client.name;
                 phoneInput.value = client.phone || "";
+                notesInput.value = client.notes || "";
                 editingClient = client;
                 addButton.textContent = "Update client / Actualizar cliente";
             });
@@ -230,8 +254,6 @@
 
             }
 
-            showClients();
-
             addButton.addEventListener("click", function (event) {
             event.preventDefault();
             const name = nameInput.value;
@@ -241,7 +263,7 @@
 
                 if (editingClient !== null) {
                     const index = clients.indexOf(editingClient);
-                    clients[index] = { name: name, phone: phoneInput.value };
+                    clients[index] = { name: name, phone: phoneInput.value, notes: notesInput.value };
                     localStorage.setItem("clients", JSON.stringify(clients));
 
                     showClients();
@@ -252,8 +274,9 @@
                     addButton.textContent = "Add client / Agregar cliente";
                     nameInput.value = "";
                     phoneInput.value = "";
+                    notesInput.value = "";
                 } else {
-                    clients.push({ name: name, phone: phoneInput.value });
+                    clients.push({ name: name, phone: phoneInput.value, notes: notesInput.value });
                     localStorage.setItem("clients", JSON.stringify(clients));
 
                     showClients();
@@ -295,6 +318,8 @@
                     nameInput.value = "";
 
                     phoneInput.value = "";
+
+                    notesInput.value = "";
                 }
             } else {
                 clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
@@ -303,6 +328,7 @@
 
         // ----- Appointment ------
         const addAppointmentButton = document.getElementById("add-appointment-button");
+        const cancelAppointmentButton = document.getElementById("cancel-appointment-button");
         const appointmentClientInput = document.getElementById("appointment-client");
         const appointmentServiceInput = document.getElementById("appointment-service");
         const appointmentDateInput = document.getElementById("appointment-date");
@@ -311,6 +337,7 @@
         const appointmentList = document.getElementById("appointment-list");
         const appointmentError = document.getElementById("appointment-error");
         let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+        let editingAppointment = null;
 
         function appointmentText(appointment) {
             let depositText = "No Deposit / Sin Depósito";
@@ -382,7 +409,7 @@
 
             const newAppointmentItem = document.createElement("li");
             newAppointmentItem.textContent = text;
-            newAppointmentItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+            newAppointmentItem.className = "flex flex-wrap gap-2 justify-between items-center py-2 border-b border-gray-200";
 
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete / Eliminar";
@@ -396,6 +423,8 @@
                 localStorage.setItem("appointments", JSON.stringify(appointments));
 
                 showAppointments();
+
+                showClients();
                 }
             });
 
@@ -416,6 +445,22 @@
                 remindLink.className = "ml-auto mr-2 bg-green-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
                 newAppointmentItem.appendChild(remindLink);
 
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit / Editar";
+                editButton.className = "mr-2 bg-blue-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+                editButton.addEventListener("click", function() {
+                    appointmentClientInput.value = line.client;
+                    appointmentServiceInput.value = line.service;
+                    appointmentDateInput.value = line.date;
+                    appointmentTimeInput.value = line.start;
+                    appointmentDepositInput.value = line.deposit || "";
+                    editingAppointment = line;
+                    addAppointmentButton.textContent = "Update appointment / Actualizar cita";
+                    cancelAppointmentButton.classList.remove("hidden");
+                });
+
+                newAppointmentItem.appendChild(editButton);
+
             }
 
             newAppointmentItem.appendChild(deleteButton);
@@ -425,6 +470,8 @@
         }
 
         showAppointments();
+
+        showClients();
 
         addAppointmentButton.addEventListener("click", function (event) {
             event.preventDefault();
@@ -452,7 +499,7 @@
                 const endTime = endHours + ":" + endMins;
 
                 const clash = appointments.find(function (other) {
-                    return other.date === date && startMinutes < toMinutes(other.end) && endMinutes > toMinutes(other.start);
+                    return other !== editingAppointment && other.date === date && startMinutes < toMinutes(other.end) && endMinutes > toMinutes(other.start);
                 });
 
                 if (clash) {
@@ -472,7 +519,7 @@
                 };
 
                 let depositText;
-                if (deposit !== "" && parseFloat(deposit) > 0) {
+                if (editingAppointment === null && deposit !== "" && parseFloat(deposit) > 0) {
                     depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
 
                     const depositMoneyItem = document.createElement("li");
@@ -515,11 +562,20 @@
                 } else {
                     depositText = "No Deposit / Sin depósito";
                 }
-
-                appointments.push(appointment);
+                if (editingAppointment) {
+                    const index = appointments.indexOf(editingAppointment);
+                    appointments[index] = appointment;
+                    editingAppointment = null;
+                    addAppointmentButton.textContent = "Add appointment / Agregar cita";
+                    cancelAppointmentButton.classList.add("hidden");
+                } else {
+                    appointments.push(appointment);
+                }
                 localStorage.setItem("appointments", JSON.stringify(appointments));
 
                 showAppointments();
+
+                showClients();
 
                 appointmentClientInput.value = "";
                 appointmentServiceInput.value = "";
@@ -531,6 +587,20 @@
             } else {
                 appointmentError.textContent = "Please fill in client, service, date and time. / Por favor, completa cliente, servicio, fecha y hora.";
             }
+        });
+
+        cancelAppointmentButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            editingAppointment = null;
+            addAppointmentButton.textContent = "Add appointment / Agregar cita";
+            cancelAppointmentButton.classList.add("hidden");
+
+            appointmentClientInput.value = "";
+            appointmentServiceInput.value = "";
+            appointmentDateInput.value = "";
+            appointmentTimeInput.value = "";
+            appointmentDepositInput.value = "";
+            appointmentError.textContent = "";
         });
 
         //----- Stock -----
