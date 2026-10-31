@@ -22,7 +22,7 @@
   <div id="hero" class="bg-cover bg-center rounded-xl flex items-center justify-center transition-all duration-100" style="background-image: url('hero.jpg'); height: 320px;">
     <h1 class="text-3xl font-bold text-center text-white drop-shadow-lg px-4">My Business Tracker / Control de Mi Negocio</h1>
   </div>
-    <p><a href="https://wa.me/521234567890?text=Hi!%20can%20I%20book%20an%20appointment." target="_blank">Book via WhatsApp / Reservar por WhatsApp</a></p>
+    <p><a href="https://wa.me/523318527628?text=Hi!%20can%20I%20book%20an%20appointment." target="_blank">Book via WhatsApp / Reservar por WhatsApp</a></p>
 
     <section class="bg-surface rounded-xl shadow-md p-6 mb-6 max-w-xl mx-auto">
         <h2>Clients / Clientes</h2>
@@ -34,6 +34,7 @@
             <label for="client-notes">Notes / Notas:</label>
             <textarea id="client-notes" class="w-full border border-gray-300 rounded-lg p-3"></textarea>
             <button id="add-client-button" class="w-full bg-brand text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Add client / Agregar cliente</button>
+            <button id="cancel-client-button" class="hidden w-full bg-gray-500 text-white font-bold py-3 px-4 rounded-lg hover:opacity-90">Cancel / Cancelar</button>
             <p id="client-error" class="text-red-600"></p>
         </form>
         <ul id="client-list">
@@ -162,6 +163,7 @@
         //----- Client -----
         const clientError = document.getElementById("client-error");
         const addButton = document.getElementById("add-client-button");
+        const cancelClientButton = document.getElementById("cancel-client-button");
         const nameInput = document.getElementById("client-name");
         const phoneInput = document.getElementById("client-phone");
         const notesInput = document.getElementById("client-notes");
@@ -226,6 +228,7 @@
                 notesInput.value = client.notes || "";
                 editingClient = client;
                 addButton.textContent = "Update client / Actualizar cliente";
+                cancelClientButton.classList.remove("hidden");
             });
             newItem.appendChild(editButton);
 
@@ -272,6 +275,7 @@
 
                     editingClient = null;
                     addButton.textContent = "Add client / Agregar cliente";
+                    cancelClientButton.classList.add("hidden");
                     nameInput.value = "";
                     phoneInput.value = "";
                     notesInput.value = "";
@@ -324,6 +328,17 @@
             } else {
                 clientError.textContent = "Please enter a client name. / Por favor, ingresa el nombre del cliente.";
             }
+        });
+
+        cancelClientButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            editingClient = null;
+            addButton.textContent = "Add client / Agregar cliente";
+            cancelClientButton.classList.add("hidden");
+            nameInput.value = "";
+            phoneInput.value = "";
+            notesInput.value = "";
+            clientError.textContent = "";
         });
 
         // ----- Appointment ------
@@ -522,7 +537,7 @@
                 if (editingAppointment === null && deposit !== "" && parseFloat(deposit) > 0) {
                     depositText = "Deposit / Deposito: $" + parseFloat(deposit).toFixed(2);
 
-                    const depositMoneyItem = document.createElement("li");
+                    /* const depositMoneyItem = document.createElement("li");
                     depositMoneyItem.textContent = "Deposit / Deposito - " + client + " - $" + parseFloat(deposit).toFixed(2);
                     depositMoneyItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
 
@@ -550,8 +565,8 @@
                     moneyList.appendChild(depositMoneyItem);
 
                     depositMoneyItem.appendChild(depositDeleteButton);
-
-                    moneyEntries.push("Deposit / Deposito - " + client + " - $" + parseFloat(deposit).toFixed(2));
+                    */
+                    moneyEntries.push({ description: "Deposit / Deposito - " + client, amount: parseFloat(deposit) });
                     localStorage.setItem("money", JSON.stringify(moneyEntries));
 
                     totalIncome += parseFloat(deposit);
@@ -559,6 +574,8 @@
                     totalIncomeDisplay.textContent = totalIncome.toFixed(2);
 
                     updateProfit();
+
+                    showMoney();
                 } else {
                     depositText = "No Deposit / Sin depósito";
                 }
@@ -611,6 +628,14 @@
         const stockError = document.getElementById("stock-error");
         const lowStockThreshold = 5;
         let stockItems = JSON.parse(localStorage.getItem("stock")) || [];
+        stockItems = stockItems.map(function (item) {
+            if (item.name) {
+                return item;
+            }
+            const parts = item.split(" - ");
+            const quantity = parts.pop();
+            return { name: parts.join(" - "), quantity: parseInt(quantity) || 0 };
+        });
         let editingStockSpan = null;
 
         // stockItem.foreach(function (item){
@@ -623,11 +648,18 @@
 
             // const itemSpan =
         // })
+
+        function showStock() {
+            stockList.textContent = "";
         
         stockItems.forEach(function (item) {
             const newStockItem = document.createElement("li");
-            newStockItem.textContent = item;
+            newStockItem.textContent = item.name + " - " + item.quantity;
             newStockItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+            if (item.quantity < lowStockThreshold) {
+                newStockItem.textContent += " ⚠️ Low stock! / ¡Inventario bajo!";
+                newStockItem.style.color = "red";
+            }
 
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete / Eliminar";
@@ -635,17 +667,22 @@
 
             deleteButton.addEventListener("click", function() {
                 if (confirm("Delete this stock item? / ¿Eliminar este artículo de inventario?")) {
-                newStockItem.remove();
+                // newStockItem.remove();
 
                     const index = stockItems.indexOf(item);
                     stockItems.splice(index, 1);
                     localStorage.setItem("stock", JSON.stringify(stockItems));
+                    showStock();
                 }
             });
+        
 
             newStockItem.appendChild(deleteButton);
             stockList.appendChild(newStockItem);
         });
+    }
+
+        showStock();
 
         addStockButton.addEventListener("click", function (event) {
             event.preventDefault();
@@ -653,9 +690,11 @@
             const quantity = stockQuantityInput.value;
 
             if (itemName !=="") {
-                stockItems.push(itemName + " - " + quantity);
+                stockItems.push({ name: itemName, quantity: parseInt(quantity) || 0 });
                 localStorage.setItem("stock", JSON.stringify(stockItems));
 
+                showStock();
+/*
                 const newStockItem = document.createElement("li");
                 newStockItem.textContent = itemName + " - " + quantity;
                 newStockItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
@@ -682,7 +721,7 @@
                 stockList.appendChild(newStockItem);
 
                 newStockItem.appendChild(deleteButton);
-
+*/
                 stockNameInput.value = "";
                 stockQuantityInput.value = "";
 
@@ -702,9 +741,21 @@
         let totalIncome = parseFloat(localStorage.getItem("totalIncome")) || 0;
         let moneyEntries = JSON.parse(localStorage.getItem("money")) || [];
 
+        moneyEntries = moneyEntries.map(function (entry) {
+            if (entry.description) {
+                return entry;
+            }
+            const parts = entry.split(" - $");
+            const amount = parts.pop();
+            return { description: parts.join(" - $"), amount: parseFloat(amount) || 0 };
+        })
+
+        function showMoney() {
+            moneyList.textContent = "";
+
         moneyEntries.forEach(function (entry) {
             const newMoneyEntry = document.createElement("li");
-            newMoneyEntry.textContent = entry;
+            newMoneyEntry.textContent = entry.description + " - $" + entry.amount.toFixed(2);
             newMoneyEntry.className = "flex justify-between items-center py-2 border-b border-gray-200";
 
             const deleteButton = document.createElement("button");
@@ -713,18 +764,20 @@
 
             deleteButton.addEventListener("click", function(){
                 if (confirm("Delete this transaction? / ¿Eliminar esta transacción?")) {
-                    newMoneyEntry.remove();
+                // newMoneyEntry.remove();
 
                     const index = moneyEntries.indexOf(entry);
                     moneyEntries.splice(index, 1);
                     localStorage.setItem("money", JSON.stringify(moneyEntries));
-
-                    const amountToRemove = parseFloat(entry.split("$")[1]);
+                    const amountToRemove = entry.amount;
+                    // const amountToRemove = parseFloat(entry.split("$")[1]);
                     totalIncome -= amountToRemove;
                     localStorage.setItem("totalIncome", totalIncome);
                     totalIncomeDisplay.textContent = totalIncome.toFixed(2);
 
                     updateProfit();
+
+                    showMoney();
                 }
             });
 
@@ -733,6 +786,8 @@
             moneyList.appendChild(newMoneyEntry);
             totalIncomeDisplay.textContent = totalIncome.toFixed(2);
         });
+    }
+        showMoney();
 
         addMoneyButton.addEventListener("click", function (event) {
             event.preventDefault();
@@ -740,7 +795,7 @@
             const amount = moneyAmountInput.value;
 
                 if (description !== "" && amount !== "") {
-                    const newMoneyItem = document.createElement("li");
+               /* const newMoneyItem = document.createElement("li");
                     newMoneyItem.textContent = description + " - $" + parseFloat(amount).toFixed(2);
                     newMoneyItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
 
@@ -768,9 +823,9 @@
                 moneyList.appendChild(newMoneyItem);
 
                 newMoneyItem.appendChild(deleteButton);
+                */
 
-
-                moneyEntries.push(description + " - $" + parseFloat(amount).toFixed(2));
+                moneyEntries.push({ description: description, amount: parseFloat(amount) });
                 localStorage.setItem("money", JSON.stringify(moneyEntries));
 
                 totalIncome += parseFloat(amount);
@@ -778,6 +833,8 @@
                 totalIncomeDisplay.textContent = totalIncome.toFixed(2);
 
                 updateProfit();
+
+                showMoney();
 
                 moneyDescriptionInput.value = "";
                 moneyAmountInput.value = "";
