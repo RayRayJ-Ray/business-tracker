@@ -903,7 +903,7 @@
         let totalExpense = parseFloat(localStorage.getItem("totalExpense")) || 0;
         let expenseEntries = JSON.parse(localStorage.getItem("expenses")) || [];
 
-     /*   expenseEntries.forEach(function (entry) {
+        expenseEntries.forEach(function (entry) {
             const newExpenseItem = document.createElement("li");
             newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
             newExpenseItem.textContent = entry;
@@ -990,7 +990,7 @@
             } else {
                 expenseError.textContent = "Please enter a description and amount. / Por favor, ingresa una descripción y un monto.";
             }
-        }); */
+        }); 
 
         // ----- Profit -----
         function updateProfit() {
