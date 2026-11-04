@@ -569,13 +569,16 @@
                     moneyEntries.push({ description: "Deposit / Deposito - " + client, amount: parseFloat(deposit) });
                     localStorage.setItem("money", JSON.stringify(moneyEntries));
 
-                    totalIncome += parseFloat(deposit);
+                    /* totalIncome += parseFloat(deposit);
                     localStorage.setItem("totalIncome", totalIncome);
                     totalIncomeDisplay.textContent = totalIncome.toFixed(2);
 
                     updateProfit();
 
+                    showMoney();*/
+
                     showMoney();
+                    updateProfit();
                 } else {
                     depositText = "No Deposit / Sin depósito";
                 }
@@ -738,7 +741,7 @@
         const moneyList = document.getElementById("money-list");
         const totalIncomeDisplay = document.getElementById("total-income");
         const moneyError = document.getElementById("money-error");
-        let totalIncome = parseFloat(localStorage.getItem("totalIncome")) || 0;
+        let totalIncome = 0;
         let moneyEntries = JSON.parse(localStorage.getItem("money")) || [];
 
         moneyEntries = moneyEntries.map(function (entry) {
@@ -748,12 +751,14 @@
             const parts = entry.split(" - $");
             const amount = parts.pop();
             return { description: parts.join(" - $"), amount: parseFloat(amount) || 0 };
-        })
+        });
 
         function showMoney() {
             moneyList.textContent = "";
+            totalIncome = 0;
 
         moneyEntries.forEach(function (entry) {
+            totalIncome += entry.amount;
             const newMoneyEntry = document.createElement("li");
             newMoneyEntry.textContent = entry.description + " - $" + entry.amount.toFixed(2);
             newMoneyEntry.className = "flex justify-between items-center py-2 border-b border-gray-200";
@@ -769,7 +774,7 @@
                     const index = moneyEntries.indexOf(entry);
                     moneyEntries.splice(index, 1);
                     localStorage.setItem("money", JSON.stringify(moneyEntries));
-                    const amountToRemove = entry.amount;
+                    /*const amountToRemove = entry.amount;
                     // const amountToRemove = parseFloat(entry.split("$")[1]);
                     totalIncome -= amountToRemove;
                     localStorage.setItem("totalIncome", totalIncome);
@@ -777,15 +782,17 @@
 
                     updateProfit();
 
+                    showMoney();*/
                     showMoney();
+                    updateProfit();
                 }
             });
 
             newMoneyEntry.appendChild(deleteButton);
 
             moneyList.appendChild(newMoneyEntry);
-            totalIncomeDisplay.textContent = totalIncome.toFixed(2);
         });
+        totalIncomeDisplay.textContent = totalIncome.toFixed(2);
     }
         showMoney();
 
@@ -828,14 +835,18 @@
                 moneyEntries.push({ description: description, amount: parseFloat(amount) });
                 localStorage.setItem("money", JSON.stringify(moneyEntries));
 
-                totalIncome += parseFloat(amount);
+                /* totalIncome += parseFloat(amount);
                 localStorage.setItem("totalIncome", totalIncome);
                 totalIncomeDisplay.textContent = totalIncome.toFixed(2);
 
                 updateProfit();
 
                 showMoney();
-
+*/
+                
+                showMoney();
+                updateProfit();
+                
                 moneyDescriptionInput.value = "";
                 moneyAmountInput.value = "";
 
@@ -892,7 +903,7 @@
         let totalExpense = parseFloat(localStorage.getItem("totalExpense")) || 0;
         let expenseEntries = JSON.parse(localStorage.getItem("expenses")) || [];
 
-        expenseEntries.forEach(function (entry) {
+     /*   expenseEntries.forEach(function (entry) {
             const newExpenseItem = document.createElement("li");
             newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
             newExpenseItem.textContent = entry;
@@ -979,7 +990,7 @@
             } else {
                 expenseError.textContent = "Please enter a description and amount. / Por favor, ingresa una descripción y un monto.";
             }
-        });
+        }); */
 
         // ----- Profit -----
         function updateProfit() {
