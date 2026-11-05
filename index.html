@@ -900,10 +900,73 @@
         const expenseList = document.getElementById("expense-list");
         const totalExpenseDisplay = document.getElementById("total-expense");
         const expenseError = document.getElementById("expense-error");
-        let totalExpense = parseFloat(localStorage.getItem("totalExpense")) || 0;
+        let totalExpense = 0;
         let expenseEntries = JSON.parse(localStorage.getItem("expenses")) || [];
 
-        expenseEntries.forEach(function (entry) {
+        expenseEntries = expenseEntries.map(function (entry) {
+            if (entry.description) {
+                return entry;
+            }
+            const parts = entry.split(" - $");
+            const amount = parts.pop();
+            return { description: parts.join(" - $"), amount: parseFloat(amount) || 0 };
+        });
+
+        function showExpenses() {
+            expenseList.textContent = "";
+            totalExpense = 0;
+
+            expenseEntries.forEach(function (entry) {
+                totalExpense += entry.amount;
+                const newExpenseItem = document.createElement("li");
+                newExpenseItem.textContent = entry.description + " - $" + entry.amount.toFixed(2);
+                newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete / Eliminar";
+                deleteButton.className = "bg-red-600 text-white font-bold py-2 px-3 rounded-lg hover:opacity-90";
+
+                deleteButton.addEventListener("click", function() {
+                    if (confirm("Delete this expense? / ¿Eliminar este gasto?")) {
+                        const index = expenseEntries.indexOf(entry);
+                        expenseEntries.splice(index, 1);
+                        localStorage.setItem("expenses",JSON.stringify(expenseEntries));
+                        showExpenses();
+                        updateProfit();
+                    }
+                });
+            newExpenseItem.appendChild(deleteButton);
+            
+            expenseList.appendChild(newExpenseItem);;
+        });
+        totalExpenseDisplay.textContent = totalExpense.toFixed(2);
+    }
+    
+        showExpenses();
+        updateProfit();
+
+                addExpenseButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const description = expenseDescriptionInput.value;
+            const amount = expenseAmountInput.value;
+
+            if (description !== "" && amount !== "") {
+                expenseEntries.push({ description: description, amount: parseFloat(amount) });
+                localStorage.setItem("expenses", JSON.stringify(expenseEntries));
+
+                showExpenses();
+                updateProfit();
+
+                expenseDescriptionInput.value = "";
+                expenseAmountInput.value = "";
+
+                expenseError.textContent = "";
+            }   else {
+                expenseError.textContent = "Please enter a description and amount. / Por favor, ingresa una descripción y un monto.";
+            }
+        });
+
+     /*   expenseEntries.forEach(function (entry) {
             const newExpenseItem = document.createElement("li");
             newExpenseItem.className = "flex justify-between items-center py-2 border-b border-gray-200";
             newExpenseItem.textContent = entry;
@@ -991,7 +1054,7 @@
                 expenseError.textContent = "Please enter a description and amount. / Por favor, ingresa una descripción y un monto.";
             }
         }); 
-
+*/
         // ----- Profit -----
         function updateProfit() {
             const profit = totalIncome - totalExpense;
